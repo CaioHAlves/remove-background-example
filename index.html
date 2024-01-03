@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Remover Fundo</title>
+</head>
+<body>
+
+  <input type="file" id="inputFile" accept="image/*">
+  <img id="outputImage" style="max-width: 100%;">
+
+  <script>
+    document.getElementById('inputFile').addEventListener('change', handleFileSelect);
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('image_file', file);
+
+        fetch('https://api.remove.bg/v1.0/removebg', {
+          method: 'POST',
+          headers: {
+            'X-Api-Key': 'uUdi7o8KuKTUXdNdRHhaz8Bx'
+          },
+          body: formData
+        })
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+          const base64Image = arrayBufferToBase64(buffer);
+          document.getElementById('outputImage').src = 'data:image/png;base64,' + base64Image;
+        })
+        .catch(error => console.error('Erro ao remover o fundo:', error));
+      }
+    }
+
+    function arrayBufferToBase64(buffer) {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+  </script>
+
+</body>
+</html>
